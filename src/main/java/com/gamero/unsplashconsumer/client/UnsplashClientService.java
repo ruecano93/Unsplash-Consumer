@@ -52,6 +52,7 @@ public class UnsplashClientService {
 						error.getMessage()));
 	}
 	
+	// TODO pending use authenticacion
 	public String authenticate() {
 		// here should include the authenticacion
 		SingletonAuthToken.getInstance().setAuthToken("Iqfqnakt1u16ifLTxAV_LgB0NGmIG2KfMWhMBmzHt6w");
