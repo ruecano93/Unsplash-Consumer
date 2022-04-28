@@ -26,14 +26,14 @@ public class CollectionService {
 	@Autowired
 	private UnsplashMapper unsplashMapper;
 
-	public Mono<List<CollectionItemDto>> getFilteredCollections(String filter) {
-		Map<String, String> filteredMap = this.convertStringToMap(filter);
+	public Mono<List<CollectionItemDto>> getFilteredCollections(String filter, String filterMap) {
+		// with a flux iterable the process could made full parallel and reactive
 		return restClient.getCollectionsClient()
-				.flatMapMany(c -> Flux.fromIterable(c) // with a flux iterable the process could made full parallel and reactive
-						.map(unsplashMapper::jsonNodeToCollectionItemDto)
+				.flatMapMany(c -> Flux.fromIterable(c).map(unsplashMapper::jsonNodeToCollectionItemDto)
 						.filter(item -> Integer.valueOf(0).equals(item.getId())))
-						.filter(item -> FilterQueryParamService.applyLikeValues(item, filteredMap))
-				.collectList();
+				.filter(item -> FilterQueryParamService.applyLikeValues(item, filter))
+				.filter(item -> filter != null || FilterQueryParamService.applyLikeValuesForMap(item, this.convertStringToMap(filterMap)))
+				.collectList(); // last filter only works when main filter is not present
 	}
 
 	// parse request filterParams to map (easy to process filters)

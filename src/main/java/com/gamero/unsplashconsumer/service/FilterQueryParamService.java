@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.springframework.util.StringUtils;
+
 import com.gamero.unsplashconsumer.dto.CollectionItemDto;
 
 public enum FilterQueryParamService {
@@ -24,7 +26,7 @@ public enum FilterQueryParamService {
         this.valueExtractor = valueExtractor;
     }
     
-    public static boolean applyLikeValues(CollectionItemDto dto, Map<String, String> queryParams) {
+    public static boolean applyLikeValuesForMap(CollectionItemDto dto, Map<String, String> queryParams) {
     	Predicate<FilterQueryParamService> filterNotPresent =  filterValue -> !queryParams.containsKey(filterValue.name);
     	Predicate<FilterQueryParamService> containsValue = filterValue -> likeText(queryParams.get(filterValue.name),filterValue.valueExtractor.apply(dto).toString());
     	return Arrays.asList(values())
@@ -33,7 +35,23 @@ public enum FilterQueryParamService {
     	// allMatch use circuit breaker and not continue when any value not match
     }
     
+    public static boolean applyLikeValues(CollectionItemDto dto, String filter) {
+    	try {
+    	return Arrays.asList(values())
+    			.parallelStream()// we can do parallel stream because order is not mandatory
+    			.filter(filterValue -> filterValue.valueExtractor.apply(dto) != null)
+    			.anyMatch(filterValue -> !StringUtils.hasText(filter) || likeText(filter, filterValue.valueExtractor.apply(dto).toString())); 
+    	// anyMatch use circuit breaker and not continue when any value match
+    	} catch (Exception ex) {
+    		ex.printStackTrace();
+    		return false;
+    	}
+    }
+    
     private static boolean likeText(String filter, String coreText) {
+    	if(coreText == null) {
+    		return false;
+    	}
     	filter = normalize(filter);
     	coreText = normalize(coreText);
     	return coreText.contains(filter); // ignore accents and make case insensitive
