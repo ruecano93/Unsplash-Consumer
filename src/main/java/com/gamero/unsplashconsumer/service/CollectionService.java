@@ -42,7 +42,7 @@ public class CollectionService {
 			if (mapAsString == null) {
 				return new HashMap<>();
 			}
-			return Arrays.stream(mapAsString.split(",")).map(s -> s.split("::"))
+			return Arrays.stream(mapAsString.split(";")).map(s -> s.split("::"))
 					.collect(Collectors.toMap(s -> s[0], s -> s[1]));
 		} catch (Exception e) {
 			throw new UnprocessableRequestException();
