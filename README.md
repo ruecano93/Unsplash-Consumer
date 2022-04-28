@@ -1,6 +1,22 @@
 # Unsplash-Consumer
 Prueba de concepto de un servicio que consume del cliente UNSPLASH
 
+Solo tenemos un servicio el cual nos retorna por el mapa que generasemos en filter una respuesta acorde a ese filtro.
+```
+http://localhost:8080/collection/all?filter=title::s;cover_photo_id::FG
+```
+retornando por ejemplo en ese caso la siguiente respuesta 
+```
+[
+  {
+    "id": 0,
+    "title": "Light Tones",
+    "description": null,
+    "cover_photo_id": "1G0gFGFVHd4"
+  }
+]
+```
+el campo filter se usa como mapa clave valor separando las entradas con punto y coma ";" y separando la clave valor con "::"
 ## Desarrollo
 El proyecto se ha desarrollado con SpringBoot 2 y Java 11 como se indica en la prueba, y como se indica que se valorara una arquitectura propia de estas tecnologias he optado por crear una applicacion Full Reactive, pues se empezo a dar soporte en la version 2 de springBoot y la mayoria de las funciones Mono-Flux fueron integradas entre java 8 y 11.
 
