@@ -1,9 +1,15 @@
 # Unsplash-Consumer
 Prueba de concepto de un servicio que consume del cliente UNSPLASH
+(Pendiente de arreglar la redireccion al login al pedir autenticacion)
 
 Solo tenemos un servicio el cual nos retorna por el mapa que generasemos en filter una respuesta acorde a ese filtro.
 ```
-http://localhost:8080/collection/all?filter=title::s;cover_photo_id::FG
+http://localhost:8000/collection/all?filter=FG
+```
+UPDATE: Antes de la resolucion de la duda hice una resolucion de filtrado que dejo para enrriquecer la prueba, es un filtro que está despriorizado con el principal, es decir si existe el primero el segundo no se evalua.
+el campo filterMap se usa como mapa clave valor separando las entradas con punto y coma ";" y separando la clave valor con "::"
+```
+http://localhost:8000/collection/all?filterMap=title::s;cover_photo_id::FG
 ```
 retornando por ejemplo en ese caso la siguiente respuesta 
 ```
@@ -16,7 +22,7 @@ retornando por ejemplo en ese caso la siguiente respuesta
   }
 ]
 ```
-el campo filter se usa como mapa clave valor separando las entradas con punto y coma ";" y separando la clave valor con "::"
+
 ## Desarrollo
 El proyecto se ha desarrollado con SpringBoot 2 y Java 11 como se indica en la prueba, y como se indica que se valorara una arquitectura propia de estas tecnologias he optado por crear una applicacion Full Reactive, pues se empezo a dar soporte en la version 2 de springBoot y la mayoria de las funciones Mono-Flux fueron integradas entre java 8 y 11.
 
@@ -24,6 +30,8 @@ Comentare lo mas interesante del desarrollo junto con posibles aplicaciones y ca
 #### 1 - [CollectionController](https://github.com/manueljgq93/Unsplash-Consumer/blob/main/src/main/java/com/gamero/unsplashconsumer/controller/CollectionController.java): 
 Controlador Rest estandar, le he integrado algunas posibles distinciones del tipo de error que cometemos, no mando descripcion de error porque esa informacion terminaria siendo expuesta a cualquiera que nos consuma y pueda iterar hasta encontrar la forma de integrarse.
 Aqui solo añadir el uso del método "decodeParam" para que puedan utilizarse espacios y caracteres especiales en los filtrados.
+#### 1 - [AuthCallbackController](https://github.com/manueljgq93/Unsplash-Consumer/blob/main/src/main/java/com/gamero/unsplashconsumer/controller/AuthCallbackController.java): 
+Controlador Rest que recibelas respuestas de mensajes de codigo de usuario para actualizar el token que se está utilizando, en caso de error simplemente no actualizamos el token, este endpoint recibiria una peticicion una ver arranque el servicio y el cliente nos mande el code, en un posible refresco programado a implementar o en caso de fallo de login en el flujo principal
 #### 2 - [CollectionService](https://github.com/manueljgq93/Unsplash-Consumer/blob/main/src/main/java/com/gamero/unsplashconsumer/service/CollectionService.java):
 Usamos un flux de la respuesta que obtenemos del cliente para poder de forma paralela y reactiva resolver la creacion de todos los items que mandaremos como respuesta, para crear el mapa pense en optar soluciones ya montadas como las de la libreria de Guava pero como se solicitava uso de las funciones de java monte una version custom de la creacion de este mapa.
 Tambien reseñas que el filtro para el Id 0 fue considerado como un id no valido y respuesta del jsonNode en caso de encontrar este valor, es modificable si no queremos este comportamiento.
@@ -49,8 +57,9 @@ Pendiente de mejoras para el uso de un multistep que haga el build de maven tamb
 No he usado docker-compose porque no requerimos un grupo de contenedores, habria sido interesante que el cliente fuese una imagen y no un servicio o incluir la integracion con bbdd, caché y demas.
 
 ## Mejoras pendientes
-###### 1 Añadir la autenticacion, la cual ahora mismo el cliente me retorna el user code en un html y no encuentro peticion que nos lo pueda reportar como rest (ese codigo es de un solo uso).
+###### 1 Solucionar la redireccion al login, la cual con las cookies de usuario es capaz de resolverme el flujo si la llamada de autenticacion se hace desde el navegador;
 ###### 2 Crear un scheduler que lo que haga es hacer la actualizacion de ese token en un hilo en segundo plano.
 ###### 3 Uso de multiStep building en el docker image
 ###### 4 Creacion de un swagger de contrato del api y uso apiFirst dentro de la misma, para no tener que preocuparnos del manteminiento de los POJOs.
 ###### 5 Posible creacion de una logica de paginado que haga mas dinamico el uso del servicio.
+###### 6 Añadir test unitarios o incluso dejar una infraestructura para probar test integrados
