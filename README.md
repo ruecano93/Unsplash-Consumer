@@ -6,7 +6,7 @@ Solo tenemos un servicio el cual nos retorna por el mapa que generasemos en filt
 ```
 http://localhost:8000/collection/all?filter=FG
 ```
-UPDATE: Antes de la resolucion de la duda hice una resolucion de filtrado que dejo para enrriquecer la prueba, es un filtro que está despriorizado con el principal, es decir si existe el primero el segundo no se evalua.
+UPDATE: Antes de la resolucion de la duda hice una resolucion de filtrado que dejo para enriquecer la prueba, es un filtro que está despriorizado con el principal, es decir si existe el primero el segundo no se evalua.
 el campo filterMap se usa como mapa clave valor separando las entradas con punto y coma ";" y separando la clave valor con "::"
 ```
 http://localhost:8000/collection/all?filterMap=title::s;cover_photo_id::FG
