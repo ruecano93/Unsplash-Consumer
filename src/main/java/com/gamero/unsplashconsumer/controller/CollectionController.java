@@ -29,8 +29,9 @@ public class CollectionController {
 	private CollectionService service;
 	
 	@GetMapping("/all")
-	public Mono<ResponseEntity<List<CollectionItemDto>>> getAllCollections(@RequestParam(value = "filter", required = false) String filter) {
-	    return service.getFilteredCollections(decodeParam(filter))
+	public Mono<ResponseEntity<List<CollectionItemDto>>> getAllCollections(@RequestParam(value = "filter", required = false) String filter,
+			@RequestParam(value = "filterMap", required = false) String filterMap) {
+	    return service.getFilteredCollections(decodeParam(filter), decodeParam(filterMap))
 	    		.map(items -> new ResponseEntity<>(items, HttpStatus.OK))
 	    		.onErrorReturn(UnprocessableRequestException.class, new ResponseEntity<>(HttpStatus.BAD_REQUEST))
 	    		.onErrorReturn(ClientAuthException.class, new ResponseEntity<>(HttpStatus.UNAUTHORIZED))
@@ -48,5 +49,4 @@ public class CollectionController {
 				})
 				.orElse(null);
 	}
-
 }
