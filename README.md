@@ -62,4 +62,5 @@ No he usado docker-compose porque no requerimos un grupo de contenedores, habria
 ###### 3 Uso de multiStep building en el docker image
 ###### 4 Creacion de un swagger de contrato del api y uso apiFirst dentro de la misma, para no tener que preocuparnos del manteminiento de los POJOs.
 ###### 5 Posible creacion de una logica de paginado que haga mas dinamico el uso del servicio.
-###### 6 Añadir test unitarios o incluso dejar una infraestructura para probar test integrados
+###### 6 Añadir test unitarios o incluso dejar una infraestructura para probar test integrados (añadido test fuera del periodo de la prueba)
+###### 7 Al inventar varios filtros, incluirlos en un patron strategy
