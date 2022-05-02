@@ -3,6 +3,7 @@ package com.gamero.unsplashconsumer.controller;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,7 @@ public class CollectionController {
 			@RequestParam(value = "filterMap", required = false) String filterMap) {
 	    return service.getFilteredCollections(decodeParam(filter), decodeParam(filterMap))
 	    		.map(items -> new ResponseEntity<>(items, HttpStatus.OK))
+	    		.timeout(Duration.ofSeconds(10L))
 	    		.onErrorReturn(UnprocessableRequestException.class, new ResponseEntity<>(HttpStatus.BAD_REQUEST))
 	    		.onErrorReturn(ClientAuthException.class, new ResponseEntity<>(HttpStatus.UNAUTHORIZED))
 	    		.onErrorReturn(new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE));

@@ -30,7 +30,7 @@ public class CollectionService {
 		// with a flux iterable the process could made full parallel and reactive
 		return restClient.getCollectionsClient()
 				.flatMapMany(c -> Flux.fromIterable(c).map(unsplashMapper::jsonNodeToCollectionItemDto)
-						.filter(item -> Integer.valueOf(0).equals(item.getId())))
+						.filter(item -> !Integer.valueOf(0).equals(item.getId())))
 				.filter(item -> FilterQueryParamService.applyLikeValues(item, filter))
 				.filter(item -> filter != null || FilterQueryParamService.applyLikeValuesForMap(item, this.convertStringToMap(filterMap)))
 				.collectList(); // last filter only works when main filter is not present
